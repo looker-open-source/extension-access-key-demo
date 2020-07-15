@@ -63,8 +63,10 @@ app.use(cors())
 app.use(bodyParser.json())
 
 /**
+ * Middleware to validate the JWT token. If valid user data gets stored
+ * on the request object.
  * With the advent of the SameSite attribute of cookies, added support
- * for the token in the Authorization header.
+ * for the token in the Authorization header instead of cookies.
  */
 app.use((req, res, next) => {
   const authHeader = req.headers.authorization
@@ -83,25 +85,30 @@ app.use((req, res, next) => {
 })
 
 /**
- * License check
+ * Access check
  */
-app.post('/license_check', async (req, res) => {
-  const { name, email, license_key } = req.body
-  // validate the license key
-  if (license_key !== process.env.LICENSE_KEY) {
+app.post('/access_check', async (req, res) => {
+  const { name, email, access_key } = req.body
+  // validate the access key. Simple in memory check for demo
+  // purposes.
+  if (access_key !== process.env.ACCESS_KEY) {
     res.status(401).send()
     return
   }
   // In theory the email could be used to check if the user is
   // authorized to access the data server. As this is just
   // sample code we just grant access.
-  console.log(`${email}/${name} licensed to use the JSON server`)
+  console.log(`${email}/${name} allowed to use the JSON server`)
   // Create the JWT token for the session.
   const options = {
     expiresIn: 3600,
   }
   const userJwt = jwt.sign({ ...req.body }, JWT_KEY, options)
   res.set('Content-Type', 'application/json')
+  // IMPORTANT - NEVER RETURN THE ACCESS KEY IN THE RESPONSE!
+  // THE LOOKER SERVER WILL NOT DETECT AND REMOVE THE ACCESS FROM
+  // THE RESPONSE. THIS MEANS THAT THE KEY WILL BE EXPOSED IN THE
+  // BROWSER WHICH IS INSECURE.
   res.status(200).send({ jwt_token: userJwt })
 })
 

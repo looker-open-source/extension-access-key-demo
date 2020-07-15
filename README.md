@@ -1,10 +1,10 @@
-# Looker Extension Kitchensink Template (React & TypeScript)
+# Looker Extension Access Key Demo Template (React & TypeScript)
 
-This repository demonstrates how to write a Looker extension that needs an API key to run.
+This repository demonstrates how to write a Looker extension that needs an access key to run.
 
 It uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/) for writing your extension, the [React Extension SDK](https://github.com/looker-open-source/extension-sdk-react) for interacting with Looker, and [Webpack](https://webpack.js.org/) for building your code.
 
-This version of the Kitchen sink requires Looker 7.9 or above.
+This version of the template requires Looker 7.9 or above.
 
 ## Getting Started for Development
 
@@ -37,10 +37,9 @@ yarn start
    You can either drag & upload this file into your Looker project, or create a `manifest.lkml` with the same content. Change the `id`, `label`, or `url` as needed.
 
 ```
-  project_name: "apikey_demo"
-
-  application:apikey_demo {
-    label: "APIKEY demo"
+  project_name: "access_key_demo"
+  application: access_key_demo {
+    label: "Extension Access Key Demo"
     url: "http://localhost:8080/bundle.js"
 
     entitlements: {
@@ -51,10 +50,10 @@ yarn start
   }
 ```
 
-6. Create a `model` LookML file in th project. The convention is to name the model the same as the extension.
+6. Create a `model` LookML file in the project. The convention is to give the model name the same name as the extension.
 
 - Add a connection in this model. It can be any connection, it doesn't matter which.
-- [Configure the model you created](https://docs.looker.com/data-modeling/getting-started/create-projects#configuring_a_model) so that it has access to some connection.
+- [Configure the model you created](https://docs.looker.com/data-modeling/getting-started/create-projects#configuring_a_model) so that it has access to the connection.
 
 7. Connect your new project to Git. You can do this multiple ways:
 
@@ -66,38 +65,38 @@ yarn start
 9. Reload the page and click the `Browse` dropdown menu. You should see the extension in the list.
 
 - The extension will load the JavaScript from the `url` you provided in the `application` definition/
-- Reloading the extension page will bring in any new code changes from the extension template.
+- Reloading the extension page will bring in any new code changes from the extension template although hot repload is supported.
 
-10. The demonstration requires that a json data server be running. To start the server run the command
+10. The demonstration requires that a data server be running to validate the access key. To start the server run the command:
 
 ```
 yarn start-server
 ```
 
-#### License key setup
+#### Access key setup
 
 Create a .env file with the following entries. Use a password generator to create the values. These values should be set prior to starting the development and data servers. Do NOT store the .env file in your source code repository.
 
 ```
-LICENSE_KEY=
+ACCESS_KEY=
 JWT_TOKEN_SECRET=
 ```
 
 ## Run the extension
 
-Use the browse menu to navigate to the extension. The license check will fail because it has not been added. Click the Add/Update button and enter the LICENSE_KEY added to the .env file. Navigate back to the Home page. The license check should now work. Click the Verify JWT to validate the JWT token.
+Use the browse menu to navigate to the extension. The access check will fail because it has not been added. Click the Add/Update access key button and enter the ACCESS_KEY added to the .env file. Navigate back to the Home page. The access key check should now work. Click the Verify JWT to validate the JWT token.
 
 ## Production Deployment
 
-The process above requires your local development server to be running to load the extension code. To allow other people to use the extension, we can build the JavaScript file and include it in the project directly.
+The process above requires your local development server to be running to load the extension code. To allow other people to use the extension build the JavaScript file and include it in the project directly.
 
-1. In your extension project directory on your development machine you can build the extension with `yarn build`.
+1. In your extension project directory build the extension with `yarn build`.
 2. Drag and drop the generated `dist/bundle.js` file into the Looker project interface
 3. Modify your `manifest.lkml` to use `file` instead of `url`:
    ```
-   project_name: "apikey_demo"
-   application:apikey_demo {
-    label: "APIKEY demo"
+   project_name: "access_key_demo"
+   application: access_key_demo {
+    label: "Extension Access Key Demo"
     file: "bundle.js"
     entitlements: {
       allow_forms: yes

@@ -26,21 +26,23 @@ import React, { useState } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { ComponentsProvider, MessageBar } from '@looker/components'
 import { ExtensionProvider } from '@looker/extension-sdk-react'
-import { LicenseScene } from './scenes/LicenseScene'
+import { AccessKeyScene } from './scenes/AccessKeyScene'
 import { HomeScene } from './scenes/HomeScene'
 import { hot } from 'react-hot-loader/root'
 
 /**
- * Extension that demonstrates a simple license check for an extension.
+ * Extension that implements a simple check to grant access to an extension
+ * using and extension access key.
+ *
  * Note that the extension developer must provide an external API endpoint
- * that validates the license. The license itself is encrypted and store
+ * that validates the access key. The access key itself is encrypted and stored
  * in Looker user attributes.
  *
  * A simple express server is provided with this demo that validates the
- * license key and returns a JWT token that can be used on subsequent
+ * access key and returns a JWT token that can be used on subsequent
  * requests. Note that the implementation is simplistic and is not
  * considered to production ready. It is just provided to show how
- * a license check could be implemented for an extension.
+ * a access key check could be implemented for an extension.
  */
 
 interface AppProps {}
@@ -50,7 +52,7 @@ interface AppProps {}
  */
 export enum ROUTES {
   HOME_ROUTE = '/',
-  LICENSE_ROUTE = '/license',
+  ACCESS_KEY_ROUTE = '/accesskey',
 }
 
 /**
@@ -58,6 +60,15 @@ export enum ROUTES {
  */
 export const DATA_SERVER_URL =
   process.env.DATA_SERVER_URL || 'http://127.0.0.1:3000'
+
+/**
+ * Access key name suffix used to store the access key in
+ * looker user attributes. Note that the user attrbute name
+ * is the extension id where '::' is replaced with '_' with
+ * a suffix of '_' and the ACCESS_KEy_NAME. Example
+ * apikey_demo_apikey_demo_access_key
+ */
+export const ACCESS_KEY_NAME = 'access_key'
 
 /**
  * Scene props extend these props. Message state is held
@@ -121,8 +132,8 @@ export const App: React.FC<AppProps> = hot(() => {
           </MessageBar>
         )}
         <Switch>
-          <Route path={ROUTES.LICENSE_ROUTE}>
-            <LicenseScene
+          <Route path={ROUTES.ACCESS_KEY_ROUTE}>
+            <AccessKeyScene
               updateCriticalMessage={updateCriticalMessage}
               updatePositiveMessage={updatePositiveMessage}
               clearMessage={clearMessage}

@@ -22,6 +22,5 @@
  * THE SOFTWARE.
  */
 
-import { MessageHandlerProps } from '../../App'
-
-export interface LicenseSceneProps extends MessageHandlerProps {}
+export * from './AccessKeyScene'
+export * from './types'

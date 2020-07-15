@@ -33,15 +33,16 @@ import {
   FetchProxy,
   FetchCustomParameters,
 } from '@looker/extension-sdk'
-import { ROUTES, DATA_SERVER_URL } from '../../App'
+import { ACCESS_KEY_NAME, ROUTES, DATA_SERVER_URL } from '../../App'
 import { HomeSceneProps } from '.'
 import { useHistory, useLocation } from 'react-router-dom'
 
 /**
  * Default scene for the APIKEY demo.
  *
- * Verifies that a valid license has been defined to user attributes in the Looker server.
- * If the license is not valid the user can add the user attribute using the core SDK.
+ * Verifies that a valid access key has been defined to user attributes in the Looker server.
+ * If the access key is not valid the user can add the access key to user attributes using
+ * the core SDK. This is demoed in the AccessKeyScene.
  */
 
 /**
@@ -60,8 +61,8 @@ export const HomeScene: React.FC<HomeSceneProps> = ({
   const location = useLocation()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK, core40SDK } = extensionContext
-  // Disable add/update license button until license check complete
-  const [licenseCheckComplete, setLicenseCheckComplete] = useState<boolean>(
+  // Disable add/update access key button until access key check complete
+  const [accessKeyCheckComplete, setAccessKeyCheckComplete] = useState<boolean>(
     false
   )
 
@@ -93,59 +94,61 @@ export const HomeScene: React.FC<HomeSceneProps> = ({
         const name = value.display_name || 'Unknown'
         const email = value.email || 'Unknown'
 
-        // Prepare to validate the license key. Create secret key tag
+        // Prepare to validate the access key. Create secret key tag
         // creates a specially formatted string that the Looker server
         // looks for and replaces with secret keys stored in the Looker
         // server.
-        const license_key = extensionSDK.createSecretKeyTag('license_key')
-        // Call the data server license check to validate the license.
-        // Note the license remains in the Looker server.
+        const access_key = extensionSDK.createSecretKeyTag(ACCESS_KEY_NAME)
+        // Call the data server to validate the access key.
+        // Note the access key remains in the Looker server. Care should be
+        // taken when developing the access token validation endpoint that
+        // it does not return the access token in its response.
         const response = await extensionSDK.serverProxy(
-          `${DATA_SERVER_URL}/license_check`,
+          `${DATA_SERVER_URL}/access_check`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               Accept: 'application/json',
             },
-            body: JSON.stringify({ license_key, name, email }),
+            body: JSON.stringify({ access_key, name, email }),
           }
         )
         if (response.ok) {
           if (response.body) {
             const { jwt_token } = response.body
             if (jwt_token) {
-              // Got a jwt token in the response so the license check was good.
+              // Got a jwt token in the response so the access check was good.
               // Store the jwt token in push state. This allows the jwt token
               // to be preserved on a page reload. Not needed for this demo
               // however the token does need to be stored somewhere.
               history.replace(location.pathname, { jwt_token })
-              updatePositiveMessage('License is valid')
+              updatePositiveMessage('Access key is valid')
             } else {
               // No jwt token so not valid
-              updateCriticalMessage('License is NOT valid')
+              updateCriticalMessage('Access key is NOT valid')
             }
           }
         } else {
           // Invalid response so not valid
-          updateCriticalMessage('License is NOT valid')
+          updateCriticalMessage('Access key is NOT valid')
         }
       } catch (error) {
         updateCriticalMessage('Unexpected error occured')
         console.error(error)
       }
-      // License check is now complete so unprotect the add/update license button
-      setLicenseCheckComplete(true)
+      // Access key check is now complete so unprotect the add/update access key button
+      setAccessKeyCheckComplete(true)
     }
     initialize()
   }, [])
 
   /**
-   * On add/update licence button navigate click navigate to license scene
+   * On add/update access key button navigate click navigate to access key scene
    */
-  const onAddUpdateLicenseClick = () => {
+  const onAddUpdateAccessKeyClick = () => {
     clearMessage()
-    history.push(ROUTES.LICENSE_ROUTE, location.state)
+    history.push(ROUTES.ACCESS_KEY_ROUTE, location.state)
   }
 
   /**
@@ -181,10 +184,10 @@ export const HomeScene: React.FC<HomeSceneProps> = ({
           Verify JWT token
         </Button>
         <Button
-          onClick={onAddUpdateLicenseClick}
-          disabled={!licenseCheckComplete}
+          onClick={onAddUpdateAccessKeyClick}
+          disabled={!accessKeyCheckComplete}
         >
-          Add/Update license
+          Add/Update access key
         </Button>
       </SpaceVertical>
     </Box>

@@ -35,15 +35,15 @@ import {
   ExtensionContext,
   ExtensionContextData,
 } from '@looker/extension-sdk-react'
-import { LicenseSceneProps } from '.'
+import { AccessKeySceneProps } from '.'
 import { useHistory, useLocation } from 'react-router-dom'
-import { ROUTES, DATA_SERVER_URL } from '../../App'
+import { ACCESS_KEY_NAME, ROUTES, DATA_SERVER_URL } from '../../App'
 
 /**
- * License scene. Demonstrates how to programatically add or replace a
- * license stored in user attributes
+ * Access key scene. Demonstrates how to programatically add or replace an
+ * access key stored in user attributes
  */
-export const LicenseScene: React.FC<LicenseSceneProps> = ({
+export const AccessKeyScene: React.FC<AccessKeySceneProps> = ({
   updateCriticalMessage,
   updatePositiveMessage,
   clearMessage,
@@ -52,14 +52,14 @@ export const LicenseScene: React.FC<LicenseSceneProps> = ({
   const location = useLocation()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
   const { extensionSDK, core40SDK } = extensionContext
-  // License key state
-  const [licenseKey, setLicenseKey] = useState('')
+  // Access key state
+  const [accessKey, setAccessKey] = useState('')
 
   /**
-   * Update license key state
+   * Update access key state
    */
-  const onLicenseKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLicenseKey(e.currentTarget.value)
+  const onAccessKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAccessKey(e.currentTarget.value)
   }
 
   /**
@@ -73,34 +73,35 @@ export const LicenseScene: React.FC<LicenseSceneProps> = ({
   /**
    * Save the license key as a user attribute
    */
-  const onLicenseKeySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onAccessKeySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Need to prevent the default processing for the form submission
     e.preventDefault()
     clearMessage()
     try {
-      // Get the name of license key user attribute (remove the special characters)
-      const licenseKeyName = extensionSDK
-        .createSecretKeyTag('license_key')
+      // Get the name of the access key user attribute (remove the special characters
+      // from the tag name)
+      const accessKeyName = extensionSDK
+        .createSecretKeyTag(ACCESS_KEY_NAME)
         .replace(/{|}/g, '')
       // Get all of the user attributes (unfortnately user attributes cannot be
       // updated by name)
       const userAttributes = await core40SDK.ok(
         core40SDK.all_user_attributes({})
       )
-      // Does the license key already exist?
-      const licenseKeyUserAttribute = userAttributes.find(
-        (userAttribute) => userAttribute.name === licenseKeyName
+      // Does the access key already exist?
+      const accessKeyUserAttribute = userAttributes.find(
+        (userAttribute) => userAttribute.name === accessKeyName
       )
       // Delete it if it does
-      if (licenseKeyUserAttribute && licenseKeyUserAttribute.id) {
-        core40SDK.delete_user_attribute(licenseKeyUserAttribute.id)
+      if (accessKeyUserAttribute && accessKeyUserAttribute.id) {
+        core40SDK.delete_user_attribute(accessKeyUserAttribute.id)
       }
-      // Add the license.
+      // Add the access key.
       await core40SDK.ok(
         core40SDK.create_user_attribute({
-          name: licenseKeyName,
-          label: 'APIKEY Demo License Key',
-          default_value: licenseKey,
+          name: accessKeyName,
+          label: 'APIKEY Demo Access Key',
+          default_value: accessKey,
           type: 'string',
           hidden_value_domain_whitelist: `${DATA_SERVER_URL}/*`,
           user_can_edit: false,
@@ -108,7 +109,8 @@ export const LicenseScene: React.FC<LicenseSceneProps> = ({
           value_is_hidden: true,
         })
       )
-      updatePositiveMessage('License saved')
+      updatePositiveMessage('Access key saved')
+      setAccessKey('')
     } catch (error) {
       updateCriticalMessage('Unexpected error occured')
       console.error(error)
@@ -118,16 +120,16 @@ export const LicenseScene: React.FC<LicenseSceneProps> = ({
   return (
     <Box m="large">
       <SpaceVertical>
-        <Heading>Add License</Heading>
-        <Form onSubmit={onLicenseKeySubmit}>
+        <Heading>Add/Update Access Key</Heading>
+        <Form onSubmit={onAccessKeySubmit}>
           <FieldText
-            label="License key"
-            name="licenseKey"
-            value={licenseKey}
-            onChange={onLicenseKeyChange}
+            label="Access key"
+            name="accessKey"
+            value={accessKey}
+            onChange={onAccessKeyChange}
             type="password"
           />
-          <Button disabled={licenseKey === ''}>Save License</Button>
+          <Button disabled={accessKey === ''}>Save access key</Button>
         </Form>
         <Button onClick={onHomeClick}>Home</Button>
       </SpaceVertical>
