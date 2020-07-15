@@ -123,11 +123,7 @@ export const App: React.FC<AppProps> = hot(() => {
     <ExtensionProvider requiredLookerVersion=">=7.9.0">
       <ComponentsProvider>
         {message && intent && (
-          <MessageBar
-            intent={intent}
-            onDismiss={clearMessage}
-            canDismiss={true}
-          >
+          <MessageBar intent={intent} onPrimaryClick={clearMessage}>
             {message}
           </MessageBar>
         )}
