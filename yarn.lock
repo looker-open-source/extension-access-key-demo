@@ -1025,10 +1025,10 @@
   dependencies:
     ts-loader "^6.1.2"
 
-"@looker/extension-sdk@^0.10.2":
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.10.2.tgz#57f70df81e8a22475d599182373eb66208e5a2fc"
-  integrity sha512-SztUWRNUq0PcDMlaMAAuGB+icgjWLTz4CVmBFgVPMIE/dRnVMJ96Q8lcIfXmzOUW3MB08p+RHwJKuXDH1+VVXQ==
+"@looker/extension-sdk@^0.10.3":
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/@looker/extension-sdk/-/extension-sdk-0.10.3.tgz#e3e8879fe70f479c2140b7a04222bff0fc904910"
+  integrity sha512-VjlD5H4NEk54qdgD4LGRzTQNdNt+VzqoxEYAjhdDnEDYWWxRjpg5+ogNGYmbFyGmsOYzMZK/G6w6P6857rztHQ==
   dependencies:
     "@looker/chatty" "^2.2.0"
     "@looker/sdk" "0.3.0-beta.1"
