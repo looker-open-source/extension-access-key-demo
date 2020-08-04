@@ -111,6 +111,15 @@ The process above requires your local development server to be running to load t
 - Webpack's module splitting is not currently supported.
 - The template uses Looker's component library and styled components. Neither of these libraries are required so you may remove and replace them with a component library of your own choice,
 
+## Production Implementation Details
+- So you've got a great idea for an extension you want to monetize and you want to get started building the production key management infrastructure. How do you get started?
+  1. You're going to need a server to validate that the extension users' keys are valid. For an example, see `/server/index.js`, where we've implemented an extremely basic (and non-functional) example that shows the necessary endpoints. The important route is `/access_check` where you need to validate the access key being sent, and return a token that will be used to validate further requests. It's up to you to manage key invalidation, user state, key TTL, and anything else that's important to the authorization process of your extension.
+
+  2. You're going to need to set an access key for your extension. One example for this can be found in `src/scenes/AccessKeyScene/AccessKeyScene.tsx::onAccessKeySubmit`. You'll notice that we use the Extension SDK to save the key as a user attribute. You can also store this key as a user attribute through the Looker UI, or include it as a field in the `marketplace.json` file, which requires the extension framework to request the key from the extension's authentication server and allows the user to set it during the extension configuration.
+
+  3. Once the access key has been set, you can make requests to your authentication server through the extension framework. An example of this can be seen in the initialize function of `src/scenes/HomeScene/HomeScene.tsx`. There, you can use the extension framework to create the tag for your access key. That tag can then be included anywhere in your request, and the Looker server will take care of replacing the string value with the actual value of your stored access key. Your server should receive a request with the key and other data you're sending, and you can decide if the request is authenticated. If so, you can return any value you want (though we recommend a JSON Web Token (JWT) for this job). **_DO NOT_** return the access key, as it will then be exposed in plaintext in the users' client. It's up to you to decide what to do with the response from your server. 
+
+
 ## Related Projects
 
 - [Looker React extension template](https://github.com/looker-open-source/extension-template-react)

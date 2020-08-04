@@ -72,6 +72,11 @@ export const AccessKeyScene: React.FC<AccessKeySceneProps> = ({
 
   /**
    * Save the license key as a user attribute
+   * 
+   * This is one way of storing the license key. The other methods of doing
+   * so would be to manually store it using as a user attribute on the User Attributes page in the Looker Admin panel,
+   * or include it as a field in the `marketplace.json` file, which allows the user to set it
+   * during the extension configuration.
    */
   const onAccessKeySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // Need to prevent the default processing for the form submission
