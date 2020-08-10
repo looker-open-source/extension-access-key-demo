@@ -28,12 +28,9 @@ import {
   ExtensionContext,
   ExtensionContextData,
 } from '@looker/extension-sdk-react'
-import {
-  ExtensionSDK,
-  FetchProxy,
-  FetchCustomParameters,
-} from '@looker/extension-sdk'
-import { ACCESS_KEY_NAME, ROUTES, DATA_SERVER_URL } from '../../App'
+import { DATA_SERVER_URL } from '../../App'
+import { ROUTES } from '../../AppRouter'
+import { createDataServerFetchProxy } from '../../utils'
 import { HomeSceneProps } from '.'
 import { useHistory, useLocation } from 'react-router-dom'
 
@@ -53,6 +50,7 @@ interface LocationState {
 }
 
 export const HomeScene: React.FC<HomeSceneProps> = ({
+  canConfigure,
   updateCriticalMessage,
   updatePositiveMessage,
   clearMessage,
@@ -60,95 +58,14 @@ export const HomeScene: React.FC<HomeSceneProps> = ({
   const history = useHistory()
   const location = useLocation()
   const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const { extensionSDK, core40SDK } = extensionContext
-  // Disable add/update access key button until access key check complete
-  const [accessKeyCheckComplete, setAccessKeyCheckComplete] = useState<boolean>(
-    false
-  )
-
-  /**
-   * Creates a fetch proxy with a bearer token. Centralizes the setup
-   * of the fetch call. Note cookies could be used but with the advent
-   * of SameSite: none, third party cookies no longer work with servers
-   * that do not use SSL.
-   */
-  const createDataServerFetchProxy = (
-    extensionSDK: ExtensionSDK,
-    locationState?: any
-  ): FetchProxy => {
-    const init: FetchCustomParameters = {}
-    if (locationState && locationState.jwt_token) {
-      init.headers = {
-        Authorization: `Bearer ${locationState.jwt_token}`,
-      }
-    }
-    return extensionSDK.createFetchProxy(undefined, init)
-  }
-
-  useEffect(() => {
-    // Initialize the scene
-    const initialize = async () => {
-      try {
-        // Get information about the current user.
-        const value = await core40SDK.ok(core40SDK.me())
-        const name = value.display_name || 'Unknown'
-        const email = value.email || 'Unknown'
-
-        // Prepare to validate the access key. Create secret key tag
-        // creates a specially formatted string that the Looker server
-        // looks for and replaces with secret keys stored in the Looker
-        // server.
-        const access_key = extensionSDK.createSecretKeyTag(ACCESS_KEY_NAME)
-        // Call the data server to validate the access key.
-        // Note the access key remains in the Looker server. Care should be
-        // taken when developing the access token validation endpoint that
-        // it does not return the access token in its response.
-        const response = await extensionSDK.serverProxy(
-          `${DATA_SERVER_URL}/access_check`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-            },
-            body: JSON.stringify({ access_key, name, email }),
-          }
-        )
-        if (response.ok) {
-          if (response.body) {
-            const { jwt_token } = response.body
-            if (jwt_token) {
-              // Got a jwt token in the response so the access check was good.
-              // Store the jwt token in push state. This allows the jwt token
-              // to be preserved on a page reload. Not needed for this demo
-              // however the token does need to be stored somewhere.
-              history.replace(location.pathname, { jwt_token })
-              updatePositiveMessage('Access key is valid')
-            } else {
-              // No jwt token so not valid
-              updateCriticalMessage('Access key is NOT valid')
-            }
-          }
-        } else {
-          // Invalid response so not valid
-          updateCriticalMessage('Access key is NOT valid')
-        }
-      } catch (error) {
-        updateCriticalMessage('Unexpected error occured')
-        console.error(error)
-      }
-      // Access key check is now complete so unprotect the add/update access key button
-      setAccessKeyCheckComplete(true)
-    }
-    initialize()
-  }, [])
+  const { extensionSDK } = extensionContext
 
   /**
    * On add/update access key button navigate click navigate to access key scene
    */
   const onAddUpdateAccessKeyClick = () => {
     clearMessage()
-    history.push(ROUTES.ACCESS_KEY_ROUTE, location.state)
+    history.push(ROUTES.CONFIGURATION_ROUTE, location.state)
   }
 
   /**
@@ -183,12 +100,9 @@ export const HomeScene: React.FC<HomeSceneProps> = ({
         <Button onClick={onVerifyTokenClick} disabled={!jwt_token}>
           Verify JWT token
         </Button>
-        <Button
-          onClick={onAddUpdateAccessKeyClick}
-          disabled={!accessKeyCheckComplete}
-        >
-          Add/Update access key
-        </Button>
+        {canConfigure && (
+          <Button onClick={onAddUpdateAccessKeyClick}>Configure</Button>
+        )}
       </SpaceVertical>
     </Box>
   )

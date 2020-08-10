@@ -22,11 +22,4 @@
  * THE SOFTWARE.
  */
 
-import { MessageHandlerProps } from '../../App'
-
-export interface HomeSceneProps extends MessageHandlerProps {
-  /**
-   * Determines if the configure button should be visible or not.
-   */
-  canConfigure: boolean
-}
+export * from './create_fetch_proxy'

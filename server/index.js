@@ -53,9 +53,11 @@ app.get('/', (req, res) => res.send('Hello World!'))
 dotenv.config()
 
 // Key for signing JWT tokens. DO NOT DO THIS IN A PRODUCTION APP.
-const JWT_KEY =
-  process.env.JWT_TOKEN_SECRET ||
-  'GV5KspkUq5Ymxkj7ZnBtrsukHySKG6y2puFbP8hGVkDbggQ7DhJFQDJrxQVRPaVv'
+const JWT_KEY = process.env.JWT_TOKEN_SECRET
+if (!JWT_KEY || JWT_KEY.trim() === '') {
+  console.error('JWT_TOKEN_SECRET not defined. Please add to .env file.')
+  process.exit(-1)
+}
 
 // Cors required
 app.use(cors())

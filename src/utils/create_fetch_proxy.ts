@@ -22,5 +22,27 @@
  * THE SOFTWARE.
  */
 
-export * from './AccessKeyScene'
-export * from './types'
+import {
+  ExtensionSDK,
+  FetchProxy,
+  FetchCustomParameters,
+} from '@looker/extension-sdk'
+
+/**
+ * Creates a fetch proxy with a bearer token. Centralizes the setup
+ * of the fetch call. Note cookies could be used but with the advent
+ * of SameSite: none, third party cookies no longer work with servers
+ * that do not use SSL.
+ */
+export const createDataServerFetchProxy = (
+  extensionSDK: ExtensionSDK,
+  locationState?: any
+): FetchProxy => {
+  const init: FetchCustomParameters = {}
+  if (locationState && locationState.jwt_token) {
+    init.headers = {
+      Authorization: `Bearer ${locationState.jwt_token}`,
+    }
+  }
+  return extensionSDK.createFetchProxy(undefined, init)
+}

@@ -35,15 +35,16 @@ import {
   ExtensionContext,
   ExtensionContextData,
 } from '@looker/extension-sdk-react'
-import { AccessKeySceneProps } from '.'
+import { ConfigurationSceneProps } from '.'
 import { useHistory, useLocation } from 'react-router-dom'
-import { ACCESS_KEY_NAME, ROUTES, DATA_SERVER_URL } from '../../App'
+import { ACCESS_KEY_NAME, DATA_SERVER_URL } from '../../App'
+import { ROUTES } from '../../AppRouter'
 
 /**
- * Access key scene. Demonstrates how to programatically add or replace an
+ * Configuration scene. Demonstrates how to programatically add or replace an
  * access key stored in user attributes
  */
-export const AccessKeyScene: React.FC<AccessKeySceneProps> = ({
+export const ConfigurationScene: React.FC<ConfigurationSceneProps> = ({
   updateCriticalMessage,
   updatePositiveMessage,
   clearMessage,
@@ -72,7 +73,7 @@ export const AccessKeyScene: React.FC<AccessKeySceneProps> = ({
 
   /**
    * Save the license key as a user attribute
-   * 
+   *
    * This is one way of storing the license key. The other methods of doing
    * so would be to manually store it using as a user attribute on the User Attributes page in the Looker Admin panel,
    * or include it as a field in the `marketplace.json` file, which allows the user to set it
@@ -125,7 +126,7 @@ export const AccessKeyScene: React.FC<AccessKeySceneProps> = ({
   return (
     <Box m="large">
       <SpaceVertical>
-        <Heading>Add/Update Access Key</Heading>
+        <Heading>Configuration</Heading>
         <Form onSubmit={onAccessKeySubmit}>
           <FieldText
             label="Access key"
@@ -134,7 +135,7 @@ export const AccessKeyScene: React.FC<AccessKeySceneProps> = ({
             onChange={onAccessKeyChange}
             type="password"
           />
-          <Button disabled={accessKey === ''}>Save access key</Button>
+          <Button disabled={accessKey === ''}>Save configuration</Button>
         </Form>
         <Button onClick={onHomeClick}>Home</Button>
       </SpaceVertical>

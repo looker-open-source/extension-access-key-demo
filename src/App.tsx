@@ -23,12 +23,10 @@
  */
 
 import React, { useState } from 'react'
-import { Switch, Route } from 'react-router-dom'
-import { ComponentsProvider, MessageBar } from '@looker/components'
+import { AppRouter } from './AppRouter'
 import { ExtensionProvider } from '@looker/extension-sdk-react'
-import { AccessKeyScene } from './scenes/AccessKeyScene'
-import { HomeScene } from './scenes/HomeScene'
 import { hot } from 'react-hot-loader/root'
+import { ComponentsProvider, MessageBar } from '@looker/components'
 
 /**
  * Extension that implements a simple check to grant access to an extension
@@ -44,31 +42,6 @@ import { hot } from 'react-hot-loader/root'
  * considered to production ready. It is just provided to show how
  * a access key check could be implemented for an extension.
  */
-
-interface AppProps {}
-
-/**
- * Routes for the extension.
- */
-export enum ROUTES {
-  HOME_ROUTE = '/',
-  ACCESS_KEY_ROUTE = '/accesskey',
-}
-
-/**
- * URL for data server
- */
-export const DATA_SERVER_URL =
-  process.env.DATA_SERVER_URL || 'http://127.0.0.1:3000'
-
-/**
- * Access key name suffix used to store the access key in
- * looker user attributes. Note that the user attrbute name
- * is the extension id where '::' is replaced with '_' with
- * a suffix of '_' and the ACCESS_KEy_NAME. Example
- * apikey_demo_apikey_demo_access_key
- */
-export const ACCESS_KEY_NAME = 'access_key'
 
 /**
  * Scene props extend these props. Message state is held
@@ -90,7 +63,32 @@ export interface MessageHandlerProps {
   clearMessage: () => void
 }
 
-export const App: React.FC<AppProps> = hot(() => {
+/**
+ * URL for data server
+ */
+export const DATA_SERVER_URL =
+  process.env.DATA_SERVER_URL || 'http://127.0.0.1:3000'
+
+/**
+ * Access key name suffix used to store the access key in
+ * looker user attributes. Note that the user attrbute name
+ * is the extension id where '::' is replaced with '_' with
+ * a suffix of '_' and the ACCESS_KEy_NAME. Example
+ * access_key_demo_access_key_demo_access_key
+ */
+export const ACCESS_KEY_NAME = 'access_key'
+
+/**
+ * The acess key demo application
+ */
+export const App: React.FC<{}> = hot(() => {
+  const [route, setRoute] = useState('')
+  const [routeState, setRouteState] = useState()
+
+  const onRouteChange = (route: string, routeState?: any) => {
+    setRoute(route)
+    setRouteState(routeState)
+  }
   // Message state, intent and message
   const [intent, setIntent] = useState<'critical' | 'positive'>()
   const [message, setMessage] = useState<string>()
@@ -120,29 +118,21 @@ export const App: React.FC<AppProps> = hot(() => {
   }
 
   return (
-    <ExtensionProvider requiredLookerVersion=">=7.9.0">
+    <ExtensionProvider
+      onRouteChange={onRouteChange}
+      requiredLookerVersion=">=7.10.0"
+    >
       <ComponentsProvider>
         {message && intent && (
           <MessageBar intent={intent} onPrimaryClick={clearMessage}>
             {message}
           </MessageBar>
         )}
-        <Switch>
-          <Route path={ROUTES.ACCESS_KEY_ROUTE}>
-            <AccessKeyScene
-              updateCriticalMessage={updateCriticalMessage}
-              updatePositiveMessage={updatePositiveMessage}
-              clearMessage={clearMessage}
-            />
-          </Route>
-          <Route>
-            <HomeScene
-              updateCriticalMessage={updateCriticalMessage}
-              updatePositiveMessage={updatePositiveMessage}
-              clearMessage={clearMessage}
-            />
-          </Route>
-        </Switch>
+        <AppRouter
+          updateCriticalMessage={updateCriticalMessage}
+          updatePositiveMessage={updatePositiveMessage}
+          clearMessage={clearMessage}
+        />
       </ComponentsProvider>
     </ExtensionProvider>
   )

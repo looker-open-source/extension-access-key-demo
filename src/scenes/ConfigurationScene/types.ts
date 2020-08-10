@@ -24,9 +24,4 @@
 
 import { MessageHandlerProps } from '../../App'
 
-export interface HomeSceneProps extends MessageHandlerProps {
-  /**
-   * Determines if the configure button should be visible or not.
-   */
-  canConfigure: boolean
-}
+export interface ConfigurationSceneProps extends MessageHandlerProps {}
