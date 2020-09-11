@@ -60,8 +60,9 @@ export enum ROUTES {
 export const AppRouter: React.FC<AppRouterProps> = hot(
   ({ updateCriticalMessage, updatePositiveMessage, clearMessage }) => {
     const [canConfigure, setCanConfigure] = useState<boolean>(false)
-    const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-    const { extensionSDK, core40SDK } = extensionContext
+    const { extensionSDK, core40SDK } = useContext<ExtensionContextData>(
+      ExtensionContext
+    )
     const history = useHistory()
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 {
   "name": "extension-template-apikey",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Looker Extension API KEY functionality demonstration",
   "main": "dist/bundle.js",
   "scripts": {
@@ -18,11 +18,10 @@
   },
   "dependencies": {
     "@hot-loader/react-dom": "^16.13.0",
-    "@looker/components": "0.9.6",
-    "@looker/embed-sdk": "1.0.0-beta.6",
-    "@looker/extension-sdk": "^0.11.0",
-    "@looker/extension-sdk-react": "^0.6.2",
-    "@looker/sdk": "0.3.0-beta.1",
+    "@looker/components": "^0.9.13",
+    "@looker/extension-sdk": "^0.12.0",
+    "@looker/extension-sdk-react": "^0.6.4",
+    "@looker/sdk": "^0.3.4-beta.2",
     "@types/node": "^12.7.5",
     "@types/react": "^16.9.25",
     "@types/react-dom": "^16.9.3",
