@@ -51,8 +51,9 @@ export const ConfigurationScene: React.FC<ConfigurationSceneProps> = ({
 }) => {
   const history = useHistory()
   const location = useLocation()
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const { extensionSDK, core40SDK } = extensionContext
+  const { extensionSDK, core40SDK } = useContext<ExtensionContextData>(
+    ExtensionContext
+  )
   // Access key state
   const [accessKey, setAccessKey] = useState('')
 

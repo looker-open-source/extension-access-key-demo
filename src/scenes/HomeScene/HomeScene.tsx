@@ -57,8 +57,7 @@ export const HomeScene: React.FC<HomeSceneProps> = ({
 }) => {
   const history = useHistory()
   const location = useLocation()
-  const extensionContext = useContext<ExtensionContextData>(ExtensionContext)
-  const { extensionSDK } = extensionContext
+  const { extensionSDK } = useContext<ExtensionContextData>(ExtensionContext)
 
   /**
    * On add/update access key button navigate click navigate to access key scene
