@@ -1,3 +1,6 @@
+# This repository is archived
+The [extension-examples](https://github.com/looker-open-source/extension-examples) repository is the new home of Looker's Extension examples.
+
 # Looker Extension Access Key Demo Template (React & TypeScript)
 
 This repository demonstrates how to write a Looker extension that needs an access key to run.
